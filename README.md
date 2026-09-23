@@ -82,6 +82,10 @@ cargo test
 cargo clippy --all-targets -- -D warnings
 ```
 
+The delivery tests forward mail into a real [Mailpit](https://mailpit.axllent.org/)
+server, so `mailpit` has to be on `PATH`; [`docs/testing.md`](docs/testing.md)
+covers the setup and what the suite proves.
+
 Database queries are checked at compile time against the `.sqlx/` offline data;
 regenerate it after changing a query:
 

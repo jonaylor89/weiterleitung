@@ -27,15 +27,18 @@ pub async fn run_delivery_worker_until_stopped(
 
     tracing::info!("Delivery worker started");
     loop {
-        match drain_queue(&pool, &relay, max_attempts).await {
+        match drain_outbox(&pool, &relay, max_attempts).await {
             Ok(0) | Err(_) => tokio::time::sleep(poll_interval).await,
             Ok(_) => {}
         }
     }
 }
 
+/// Delivers every message that is due right now and reports how many were
+/// claimed. Callers that need a single pass (tests, one-shot runs) use this
+/// instead of the polling loop.
 #[tracing::instrument(name = "Drain outbox", skip(pool, relay))]
-async fn drain_queue(
+pub async fn drain_outbox(
     pool: &SqlitePool,
     relay: &Relay,
     max_attempts: i64,

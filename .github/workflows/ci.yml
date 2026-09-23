@@ -13,6 +13,7 @@ permissions:
 
 env:
   SQLX_OFFLINE: true
+  MAILPIT_VERSION: v1.31.2
 
 jobs:
   fmt:
@@ -52,6 +53,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
+      - name: Install Mailpit
+        run: |
+          curl -fsSL -o mailpit.tar.gz \
+            "https://github.com/axllent/mailpit/releases/download/${MAILPIT_VERSION}/mailpit-linux-amd64.tar.gz"
+          tar -xzf mailpit.tar.gz mailpit
+          sudo install -m 0755 mailpit /usr/local/bin/mailpit
+          rm mailpit mailpit.tar.gz
+          mailpit version
       - run: cargo test
 
   sqlx:

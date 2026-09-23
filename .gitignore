@@ -2,3 +2,4 @@
 /data
 .env
 *.pem
+!tests/api/dkim_test_key.pem
