@@ -1,0 +1,86 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT\n            message_id, direction, envelope_from, envelope_to, raw_path,\n            alias_id, contact_id, subject, status, attempts, last_error, created_at\n        FROM outbox\n        ORDER BY created_at DESC\n        LIMIT ?\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "message_id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "direction",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "envelope_from",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "envelope_to",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "raw_path",
+        "ordinal": 4,
+        "type_info": "Text"
+      },
+      {
+        "name": "alias_id",
+        "ordinal": 5,
+        "type_info": "Text"
+      },
+      {
+        "name": "contact_id",
+        "ordinal": 6,
+        "type_info": "Text"
+      },
+      {
+        "name": "subject",
+        "ordinal": 7,
+        "type_info": "Text"
+      },
+      {
+        "name": "status",
+        "ordinal": 8,
+        "type_info": "Text"
+      },
+      {
+        "name": "attempts",
+        "ordinal": 9,
+        "type_info": "Integer"
+      },
+      {
+        "name": "last_error",
+        "ordinal": 10,
+        "type_info": "Text"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 11,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "15a56ce970bfe9922ffb4951f8fe77a80c0b5fad9bf0f79de702adff53ac2f6e"
+}

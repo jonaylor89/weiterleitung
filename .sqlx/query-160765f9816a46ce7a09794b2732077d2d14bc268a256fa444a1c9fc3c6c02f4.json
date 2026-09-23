@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        INSERT INTO aliases (alias_id, address, mailbox_id, note, enabled, created_at)\n        VALUES (?, ?, ?, ?, 1, ?)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 5
+    },
+    "nullable": []
+  },
+  "hash": "160765f9816a46ce7a09794b2732077d2d14bc268a256fa444a1c9fc3c6c02f4"
+}

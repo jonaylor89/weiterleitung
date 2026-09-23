@@ -1,0 +1,33 @@
+application:
+  port: 8000
+  hmac_secret: "super-long-and-secret-random-key-needed-to-verify-message-integrity"
+
+database:
+  path: "./data/weiterleitung.db"
+
+admin:
+  username: "admin"
+  password: "changeme"
+
+aliases:
+  domains:
+    - "example.com"
+  reverse_alias_prefix: "ct"
+
+inbound:
+  host: "0.0.0.0"
+  port: 2525
+  hostname: "mail.example.com"
+  max_message_size: 26214400
+
+delivery:
+  mode: "relay"
+  mail_dir: "./data/mail"
+  poll_interval_secs: 10
+  max_attempts: 8
+  ehlo_hostname: "mail.example.com"
+
+dkim:
+  enabled: false
+  domain: "example.com"
+  selector: "weiterleitung"

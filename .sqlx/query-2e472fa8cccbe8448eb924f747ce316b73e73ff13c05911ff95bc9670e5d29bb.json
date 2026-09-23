@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE aliases SET forward_count = forward_count + 1, last_used_at = ? WHERE alias_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "2e472fa8cccbe8448eb924f747ce316b73e73ff13c05911ff95bc9670e5d29bb"
+}

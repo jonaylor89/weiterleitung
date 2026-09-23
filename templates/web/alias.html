@@ -1,0 +1,31 @@
+{% extends "web/_layout.html" %}
+
+{% block title %}{{ alias.address }} &middot; weiterleitung{% endblock %}
+
+{% block content %}
+<h2>alias</h2>
+<p>
+  <code>{{ alias.address }}</code>
+  {% if !alias.enabled %}<span class="pill">disabled</span>{% endif %}
+  <span class="muted">&rarr; <code>{{ alias.mailbox_email }}</code></span>
+</p>
+<p class="muted">
+  {{ alias.note }}
+  &middot; {{ alias.forward_count }} forwarded &middot; {{ alias.reply_count }} replied
+  &middot; {{ alias.blocked_count }} blocked &middot; created {{ alias.created_at }}
+</p>
+
+<h2>contacts</h2>
+<p class="muted">Reply to the reverse alias and the contact sees the alias as the sender.</p>
+<table>
+  <tr><th>contact</th><th>name</th><th>reverse alias</th><th>first seen</th></tr>
+  {% for contact in contacts %}
+  <tr>
+    <td><code>{{ contact.email }}</code></td>
+    <td>{{ contact.name }}</td>
+    <td><code>{{ contact.reverse_alias }}</code></td>
+    <td class="muted">{{ contact.created_at }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE aliases SET enabled = ? WHERE alias_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "58b2a4b31ed539ae80e8e3555db95ca44a230096765b45f6d56ce0785dc67dcd"
+}

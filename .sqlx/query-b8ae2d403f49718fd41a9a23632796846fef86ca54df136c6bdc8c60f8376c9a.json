@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        INSERT INTO mailboxes (mailbox_id, email, is_default, created_at)\n        VALUES (?, ?, ?, ?)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 4
+    },
+    "nullable": []
+  },
+  "hash": "b8ae2d403f49718fd41a9a23632796846fef86ca54df136c6bdc8c60f8376c9a"
+}

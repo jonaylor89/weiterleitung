@@ -1,0 +1,80 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT\n            a.alias_id, a.address, a.mailbox_id, a.note, a.enabled,\n            a.forward_count, a.reply_count, a.blocked_count,\n            a.created_at, a.last_used_at,\n            m.email AS mailbox_email\n        FROM aliases a\n        JOIN mailboxes m ON m.mailbox_id = a.mailbox_id\n        WHERE a.address = ?\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "alias_id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "address",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "mailbox_id",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "note",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "enabled",
+        "ordinal": 4,
+        "type_info": "Integer"
+      },
+      {
+        "name": "forward_count",
+        "ordinal": 5,
+        "type_info": "Integer"
+      },
+      {
+        "name": "reply_count",
+        "ordinal": 6,
+        "type_info": "Integer"
+      },
+      {
+        "name": "blocked_count",
+        "ordinal": 7,
+        "type_info": "Integer"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 8,
+        "type_info": "Text"
+      },
+      {
+        "name": "last_used_at",
+        "ordinal": 9,
+        "type_info": "Text"
+      },
+      {
+        "name": "mailbox_email",
+        "ordinal": 10,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "a8e19d47053980aa2b50ec6f5aa226465abfab9920bf42dfa2fdce1fd62777a9"
+}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}weiterleitung{% endblock %}</title>
+    <style>
+      :root { color-scheme: light dark; --fg: #16181d; --muted: #6b7280; --line: #e5e7eb; --accent: #2563eb; }
+      @media (prefers-color-scheme: dark) {
+        :root { --fg: #e5e7eb; --muted: #9ca3af; --line: #2c313a; --accent: #60a5fa; }
+        body { background: #101318; }
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--fg); }
+      main { max-width: 68rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+      header { border-bottom: 1px solid var(--line); }
+      header div { max-width: 68rem; margin: 0 auto; padding: 1rem 1.25rem; display: flex; gap: 1.25rem; align-items: baseline; }
+      header a { color: inherit; text-decoration: none; }
+      header a:hover { color: var(--accent); }
+      h1 { font-size: 1.1rem; margin: 0; letter-spacing: .02em; }
+      h2 { font-size: .95rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 2rem 0 .75rem; }
+      table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+      th, td { text-align: left; padding: .5rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+      th { color: var(--muted); font-weight: 500; }
+      code { font: .85rem ui-monospace, SFMono-Regular, Menlo, monospace; }
+      form.inline { display: inline; }
+      input, select, textarea { font: inherit; padding: .4rem .5rem; border: 1px solid var(--line); border-radius: .35rem; background: transparent; color: inherit; }
+      button { font: inherit; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .35rem; background: transparent; color: inherit; cursor: pointer; }
+      button.primary { border-color: var(--accent); color: var(--accent); }
+      .row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+      .muted { color: var(--muted); }
+      .flash { padding: .6rem .8rem; border-radius: .35rem; border: 1px solid var(--line); margin-bottom: .5rem; }
+      .flash.error { border-color: #ef4444; color: #ef4444; }
+      .pill { font-size: .75rem; padding: .1rem .45rem; border: 1px solid var(--line); border-radius: 1rem; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1><a href="/admin/dashboard">weiterleitung</a></h1>
+        <a href="/admin/dashboard">aliases</a>
+        <a href="/admin/mailboxes">mailboxes</a>
+        <form class="inline" action="/admin/logout" method="post" style="margin-left:auto">
+          <button type="submit">log out</button>
+        </form>
+      </div>
+    </header>
+    <main>
+      {% for message in flash_messages %}
+        <p class="flash {% if message.is_error() %}error{% endif %}">{{ message }}</p>
+      {% endfor %}
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

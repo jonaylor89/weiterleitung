@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        INSERT INTO outbox (\n            message_id, direction, envelope_from, envelope_to, raw_path,\n            alias_id, contact_id, subject, status, attempts, next_attempt_at, created_at\n        )\n        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 0, ?, ?)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 10
+    },
+    "nullable": []
+  },
+  "hash": "e125d9c161323ba2a44bfd4b373f35925a3ffa620d172eaaca411649fe379e72"
+}

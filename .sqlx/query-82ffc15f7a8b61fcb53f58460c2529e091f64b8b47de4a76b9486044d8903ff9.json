@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "DELETE FROM aliases WHERE alias_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "82ffc15f7a8b61fcb53f58460c2529e091f64b8b47de4a76b9486044d8903ff9"
+}

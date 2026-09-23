@@ -1,0 +1,68 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT\n            c.contact_id, c.alias_id, c.email, c.name, c.reverse_alias, c.created_at,\n            a.address AS alias_address, a.enabled AS alias_enabled,\n            m.email AS mailbox_email\n        FROM contacts c\n        JOIN aliases a ON a.alias_id = c.alias_id\n        JOIN mailboxes m ON m.mailbox_id = a.mailbox_id\n        WHERE c.reverse_alias = ?\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "contact_id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "alias_id",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "email",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "name",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "reverse_alias",
+        "ordinal": 4,
+        "type_info": "Text"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 5,
+        "type_info": "Text"
+      },
+      {
+        "name": "alias_address",
+        "ordinal": 6,
+        "type_info": "Text"
+      },
+      {
+        "name": "alias_enabled",
+        "ordinal": 7,
+        "type_info": "Integer"
+      },
+      {
+        "name": "mailbox_email",
+        "ordinal": 8,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "5e1fb5e1ab9e998cd0050b990a48f3a44ca36cdd0b8a8d15b0666419113757a1"
+}

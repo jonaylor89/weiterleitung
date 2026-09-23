@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "DELETE FROM mailboxes WHERE mailbox_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "7d8f816e4f67054522325489700fb2f5d6d45a2f318cb9b8f6c74b80f3b16dab"
+}

@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE aliases SET blocked_count = blocked_count + 1, last_used_at = ? WHERE alias_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "b3ca1325a9b80e97e9e14977b33d5ecef25fcfd3325c21eb4f21ac82b2c33afd"
+}

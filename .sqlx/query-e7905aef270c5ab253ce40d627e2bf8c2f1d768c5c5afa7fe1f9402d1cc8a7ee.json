@@ -1,0 +1,44 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT\n            m.mailbox_id, m.email, m.is_default, m.created_at,\n            COUNT(a.alias_id) AS alias_count\n        FROM mailboxes m\n        LEFT JOIN aliases a ON a.mailbox_id = m.mailbox_id\n        GROUP BY m.mailbox_id\n        ORDER BY m.is_default DESC, m.email ASC\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "mailbox_id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "email",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "is_default",
+        "ordinal": 2,
+        "type_info": "Integer"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "alias_count",
+        "ordinal": 4,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "e7905aef270c5ab253ce40d627e2bf8c2f1d768c5c5afa7fe1f9402d1cc8a7ee"
+}

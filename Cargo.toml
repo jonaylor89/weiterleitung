@@ -1,0 +1,63 @@
+[package]
+edition = "2024"
+name = "weiterleitung"
+version = "0.1.0"
+default-run = "weiterleitung"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "weiterleitung"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1.0.100"
+argon2 = { version = "0.5.3", features = ["std"] }
+askama = "0.12"
+axum = "0.8.4"
+base64 = "0.22.1"
+chrono = { version = "0.4.42", features = ["serde"] }
+config = "0.14.1"
+futures-util = "0.3"
+hickory-resolver = "0.24.4"
+mail-auth = "0.12"
+mail-builder = "0.5"
+mail-parser = "0.11"
+mail-send = { version = "0.6", default-features = false, features = ["builder", "dkim", "ring", "tls12"] }
+smtp-proto = "0.2"
+rand = "0.8.5"
+secrecy = { version = "0.8.0", features = ["serde"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde-aux = "4.5.0"
+serde_json = "1.0.149"
+thiserror = "1.0.69"
+time = "0.3.45"
+tokio = { version = "1.49", features = ["macros", "rt-multi-thread", "net", "io-util", "time", "signal"] }
+tokio-rustls = "0.26.1"
+tower = { version = "0.5.1", features = ["util"] }
+tower-http = { version = "0.6.1", features = ["trace"] }
+tower-sessions = { version = "0.14.0", features = ["axum-core", "private"] }
+tower-sessions-sqlx-store = { version = "0.15.0", features = ["sqlite"] }
+tracing = { version = "0.1.44", features = ["log"] }
+tracing-bunyan-formatter = "0.3.10"
+tracing-log = "0.2.0"
+tracing-subscriber = { version = "0.3.22", features = ["registry", "env-filter"] }
+unicode-segmentation = "1.12.0"
+uuid = { version = "1.19.0", features = ["v4", "serde"] }
+rustls-pki-types = { version = "1.15", features = ["std"] }
+
+[dependencies.sqlx]
+default-features = false
+features = ["runtime-tokio", "macros", "sqlite", "uuid", "chrono", "migrate"]
+version = "^0.8"
+
+[dev-dependencies]
+reqwest = { version = "0.12.9", default-features = false, features = ["json", "rustls-tls", "cookies"] }
+serde_json = "1.0.149"
+serde_urlencoded = "0.7.1"
+tempfile = "3.14.0"
+
+[lints.clippy]
+allow_attributes = "forbid"
+allow_attributes_without_reason = "forbid"

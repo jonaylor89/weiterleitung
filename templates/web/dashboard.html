@@ -1,0 +1,66 @@
+{% extends "web/_layout.html" %}
+
+{% block title %}aliases &middot; weiterleitung{% endblock %}
+
+{% block content %}
+<h2>new alias</h2>
+<form action="/admin/aliases" method="post" class="row">
+  <input type="text" name="local_part" placeholder="local part (blank = random)" size="28" />
+  <span class="muted">@{{ default_domain }}</span>
+  <select name="mailbox_id">
+    {% for mailbox in mailboxes %}
+      <option value="{{ mailbox.mailbox_id }}">{{ mailbox.email }}</option>
+    {% endfor %}
+  </select>
+  <input type="text" name="note" placeholder="note" size="24" />
+  <button class="primary" type="submit">create</button>
+</form>
+{% if mailboxes.is_empty() %}
+  <p class="muted">Add a mailbox first — aliases need somewhere to forward to.</p>
+{% endif %}
+
+<h2>aliases</h2>
+<table>
+  <tr>
+    <th>alias</th><th>forwards to</th><th>note</th><th>fwd</th><th>reply</th><th>blocked</th><th>created</th><th></th>
+  </tr>
+  {% for alias in aliases %}
+  <tr>
+    <td>
+      <a href="/admin/aliases/{{ alias.alias_id }}"><code>{{ alias.address }}</code></a>
+      {% if !alias.enabled %}<span class="pill">disabled</span>{% endif %}
+    </td>
+    <td class="muted"><code>{{ alias.mailbox_email }}</code></td>
+    <td class="muted">{{ alias.note }}</td>
+    <td>{{ alias.forward_count }}</td>
+    <td>{{ alias.reply_count }}</td>
+    <td>{{ alias.blocked_count }}</td>
+    <td class="muted">{{ alias.created_at }}</td>
+    <td class="row">
+      <form class="inline" action="/admin/aliases/{{ alias.alias_id }}/toggle" method="post">
+        <button type="submit">{% if alias.enabled %}disable{% else %}enable{% endif %}</button>
+      </form>
+      <form class="inline" action="/admin/aliases/{{ alias.alias_id }}/delete" method="post">
+        <button type="submit">delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h2>recent mail</h2>
+<table>
+  <tr><th>when</th><th>direction</th><th>from</th><th>to</th><th>subject</th><th>status</th><th>error</th></tr>
+  {% for message in messages %}
+  <tr>
+    <td class="muted">{{ message.created_at }}</td>
+    <td>{{ message.direction }}</td>
+    <td class="muted"><code>{{ message.envelope_from }}</code></td>
+    <td class="muted"><code>{{ message.envelope_to }}</code></td>
+    <td>{{ message.subject }}</td>
+    <td>{{ message.status }}{% if message.attempts > 0 %} <span class="muted">({{ message.attempts }})</span>{% endif %}</td>
+    <td class="muted">{{ message.last_error }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

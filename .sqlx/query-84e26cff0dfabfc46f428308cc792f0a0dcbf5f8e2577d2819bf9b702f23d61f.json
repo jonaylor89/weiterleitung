@@ -1,0 +1,38 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT mailbox_id, email, is_default, created_at\n        FROM mailboxes\n        WHERE email = ?\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "mailbox_id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "email",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "is_default",
+        "ordinal": 2,
+        "type_info": "Integer"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 3,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "84e26cff0dfabfc46f428308cc792f0a0dcbf5f8e2577d2819bf9b702f23d61f"
+}

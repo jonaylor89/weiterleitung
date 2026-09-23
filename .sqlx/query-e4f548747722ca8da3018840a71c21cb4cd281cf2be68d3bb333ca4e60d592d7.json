@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE aliases SET reply_count = reply_count + 1, last_used_at = ? WHERE alias_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "e4f548747722ca8da3018840a71c21cb4cd281cf2be68d3bb333ca4e60d592d7"
+}

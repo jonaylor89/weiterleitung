@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        INSERT INTO contacts (contact_id, alias_id, email, name, reverse_alias, created_at)\n        VALUES (?, ?, ?, ?, ?, ?)\n        ON CONFLICT (alias_id, email) DO NOTHING\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 6
+    },
+    "nullable": []
+  },
+  "hash": "b8e13db6b7ea7c5da1595d8ec6f0072aa59cc27aedc16b2c45f45632ac06a084"
+}

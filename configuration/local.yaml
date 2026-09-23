@@ -1,0 +1,16 @@
+application:
+  host: 127.0.0.1
+  base_url: "http://127.0.0.1:8000"
+
+inbound:
+  host: 127.0.0.1
+  port: 2525
+
+# Local dev relays into a catch-all SMTP sink (e.g. `mailpit` on 1025) so no
+# mail escapes the machine.
+delivery:
+  mode: "relay"
+  relay:
+    host: "127.0.0.1"
+    port: 1025
+  ehlo_hostname: "localhost"

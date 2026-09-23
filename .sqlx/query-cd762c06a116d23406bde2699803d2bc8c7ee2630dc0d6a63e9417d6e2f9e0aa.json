@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n            UPDATE outbox\n            SET status = 'failed', attempts = ?, last_error = ?\n            WHERE message_id = ?\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 3
+    },
+    "nullable": []
+  },
+  "hash": "cd762c06a116d23406bde2699803d2bc8c7ee2630dc0d6a63e9417d6e2f9e0aa"
+}

@@ -1,0 +1,16 @@
+application:
+  host: 0.0.0.0
+  base_url: "https://mail.example.com"
+
+inbound:
+  host: 0.0.0.0
+  port: 25
+
+# Deliver straight to the recipient's MX. Set `mode: relay` plus a `relay`
+# block to hand everything to a smarthost instead.
+delivery:
+  mode: "direct"
+
+dkim:
+  enabled: true
+  private_key_path: "/etc/weiterleitung/dkim.pem"

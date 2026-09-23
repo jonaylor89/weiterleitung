@@ -1,0 +1,30 @@
+{% extends "web/_layout.html" %}
+
+{% block title %}mailboxes &middot; weiterleitung{% endblock %}
+
+{% block content %}
+<h2>new mailbox</h2>
+<form action="/admin/mailboxes" method="post" class="row">
+  <input type="email" name="email" placeholder="me@personal.example" size="32" />
+  <label class="muted"><input type="checkbox" name="is_default" value="true" /> default</label>
+  <button class="primary" type="submit">add</button>
+</form>
+
+<h2>mailboxes</h2>
+<table>
+  <tr><th>address</th><th>aliases</th><th></th><th></th></tr>
+  {% for mailbox in mailboxes %}
+  <tr>
+    <td><code>{{ mailbox.email }}</code> {% if mailbox.is_default %}<span class="pill">default</span>{% endif %}</td>
+    <td>{{ mailbox.alias_count }}</td>
+    <td></td>
+    <td>
+      <form class="inline" action="/admin/mailboxes/{{ mailbox.mailbox_id }}/delete" method="post">
+        <button type="submit">delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+<p class="muted">Deleting a mailbox deletes its aliases and their contacts.</p>
+{% endblock %}
