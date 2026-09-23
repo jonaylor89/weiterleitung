@@ -1,0 +1,117 @@
+{% extends "web/_layout.html" %}
+{%- import "web/components/button.html" as button -%}
+{%- import "web/components/feedback.html" as feedback -%}
+{%- import "web/components/form.html" as form -%}
+{%- import "web/components/copy.html" as copy -%}
+
+{% block title %}styleguide &middot; weiterleitung{% endblock %}
+
+{% block content %}
+<div class="page__header">
+  <h1 class="page__title">styleguide</h1>
+  <p class="page__subtitle">every component in the system, rendered from the same macros the pages use</p>
+</div>
+
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">buttons</h2>
+  </div>
+  <div class="card">
+    <div class="card__body row">
+      {% call button::button("default", "neutral", "button") %}
+      {% call button::button("primary", "primary", "button") %}
+      {% call button::button("destructive", "danger", "button") %}
+      {% call button::link_button("/admin/dashboard", "link", "neutral") %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">form</h2>
+  </div>
+  <div class="card">
+    <div class="card__body form-row">
+      {% call form::field("demo_text", "text", "text", "placeholder", "an optional hint") %}
+      {% call form::field_error("demo_error", "invalid", "email", "That is not an address.") %}
+      {% call form::checkbox("demo_check", "a checkbox", "true") %}
+      <div class="form-row__action">
+        {% call button::button("submit", "primary", "button") %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">badges and alerts</h2>
+  </div>
+  <div class="card">
+    <div class="card__body stack">
+      <div class="row">
+        {% call feedback::badge("neutral", "neutral") %}
+        {% call feedback::badge("enabled", "success") %}
+        {% call feedback::badge("disabled", "danger") %}
+        {% call feedback::badge("sending", "warning") %}
+        {% call feedback::badge("default", "accent") %}
+      </div>
+      {% call feedback::alert("An informational flash message.", false) %}
+      {% call feedback::alert("An error flash message.", true) %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">stat tiles</h2>
+  </div>
+  <div class="stats">
+    {% call feedback::stat("aliases", 12) %}
+    {% call feedback::stat("mailboxes", 2) %}
+    {% call feedback::stat("recent mail", 50) %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">table</h2>
+  </div>
+  <div class="card card--flush">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">alias</th>
+            <th scope="col">status</th>
+            <th scope="col" class="table__num">fwd</th>
+            <th scope="col"><span class="visually-hidden">actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="alias">{% call copy::copy("shop.7f3a@example.com") %}</td>
+            <td data-label="status">{% call feedback::status_badge("sent") %}</td>
+            <td data-label="forwarded" class="table__num">3</td>
+            <td>
+              <div class="table__actions">
+                {% call button::button("disable", "neutral", "button") %}
+                {% call button::button("delete", "danger", "button") %}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="card__footer">A card footer, for the caveats that belong under a table.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">empty state</h2>
+  </div>
+  <div class="card card--flush">
+    {% call feedback::empty("Nothing here yet", "What the user should do next, in one line.") %}
+  </div>
+</section>
+{% endblock %}

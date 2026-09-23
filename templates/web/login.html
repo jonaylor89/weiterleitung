@@ -1,33 +1,27 @@
+{%- import "web/components/feedback.html" as feedback -%}
+{%- import "web/components/form.html" as form -%}
+{%- import "web/components/button.html" as button -%}
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>log in &middot; weiterleitung</title>
-    <style>
-      :root { color-scheme: light dark; --fg: #16181d; --muted: #6b7280; --line: #e5e7eb; --accent: #2563eb; }
-      @media (prefers-color-scheme: dark) {
-        :root { --fg: #e5e7eb; --muted: #9ca3af; --line: #2c313a; --accent: #60a5fa; }
-        body { background: #101318; }
-      }
-      body { margin: 0; min-height: 100vh; display: grid; place-items: center; color: var(--fg);
-             font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
-      form { display: grid; gap: .6rem; width: 18rem; }
-      h1 { font-size: 1.1rem; margin: 0 0 .5rem; }
-      input { font: inherit; padding: .45rem .55rem; border: 1px solid var(--line); border-radius: .35rem; background: transparent; color: inherit; }
-      button { font: inherit; padding: .45rem .7rem; border: 1px solid var(--accent); color: var(--accent); border-radius: .35rem; background: transparent; cursor: pointer; }
-      .flash { padding: .5rem .7rem; border: 1px solid #ef4444; color: #ef4444; border-radius: .35rem; }
-    </style>
+    <link rel="stylesheet" href="/static/app.css" />
   </head>
   <body>
-    <form action="/login" method="post">
-      <h1>weiterleitung</h1>
-      {% for message in flash_messages %}
-        <p class="flash">{{ message }}</p>
-      {% endfor %}
-      <input type="text" name="username" placeholder="username" autocomplete="username" autofocus />
-      <input type="password" name="password" placeholder="password" autocomplete="current-password" />
-      <button type="submit">log in</button>
-    </form>
+    <main class="centered">
+      <div class="card auth-card">
+        <form class="card__body stack" action="/login" method="post">
+          <h1 class="auth-card__title">weiterleitung</h1>
+          {% for message in flash_messages %}
+            {% call feedback::alert(message, message.is_error()) %}
+          {% endfor %}
+          {% call form::auth_field("username", "username", "text", "username", true) %}
+          {% call form::auth_field("password", "password", "password", "current-password", false) %}
+          {% call button::button("log in", "primary", "submit") %}
+        </form>
+      </div>
+    </main>
   </body>
 </html>

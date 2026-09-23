@@ -1,0 +1,16 @@
+{# Buttons. `variant` is one of "neutral", "primary", "danger". #}
+
+{% macro button(label, variant, kind) %}
+<button class="btn{% if variant != "neutral" %} btn--{{ variant }}{% endif %}" type="{{ kind }}">{{ label }}</button>
+{% endmacro %}
+
+{# A single-button form, for the POST-only actions in this app. #}
+{% macro post_button(action, label, variant) %}
+<form class="form-inline" action="{{ action }}" method="post">
+  <button class="btn btn--sm{% if variant != "neutral" %} btn--{{ variant }}{% endif %}" type="submit">{{ label }}</button>
+</form>
+{% endmacro %}
+
+{% macro link_button(href, label, variant) %}
+<a class="btn{% if variant != "neutral" %} btn--{{ variant }}{% endif %}" href="{{ href }}">{{ label }}</a>
+{% endmacro %}

@@ -1,31 +1,90 @@
 {% extends "web/_layout.html" %}
+{%- import "web/components/button.html" as button -%}
+{%- import "web/components/feedback.html" as feedback -%}
+{%- import "web/components/copy.html" as copy -%}
 
 {% block title %}{{ alias.address }} &middot; weiterleitung{% endblock %}
+{% block nav_aliases %}aria-current="page"{% endblock %}
 
 {% block content %}
-<h2>alias</h2>
-<p>
-  <code>{{ alias.address }}</code>
-  {% if !alias.enabled %}<span class="pill">disabled</span>{% endif %}
-  <span class="muted">&rarr; <code>{{ alias.mailbox_email }}</code></span>
-</p>
-<p class="muted">
-  {{ alias.note }}
-  &middot; {{ alias.forward_count }} forwarded &middot; {{ alias.reply_count }} replied
-  &middot; {{ alias.blocked_count }} blocked &middot; created {{ alias.created_at }}
-</p>
+<div class="page__header">
+  <h1 class="page__title">
+    <span class="row">
+      {% call copy::copy(alias.address) %}
+      {% if alias.enabled %}
+        {% call feedback::badge("enabled", "success") %}
+      {% else %}
+        {% call feedback::badge("disabled", "neutral") %}
+      {% endif %}
+    </span>
+  </h1>
+  <div class="row">
+    {% if alias.enabled %}
+      {% call button::post_button("/admin/aliases/{}/toggle"|format(alias.alias_id), "disable", "neutral") %}
+    {% else %}
+      {% call button::post_button("/admin/aliases/{}/toggle"|format(alias.alias_id), "enable", "neutral") %}
+    {% endif %}
+    {% call button::post_button("/admin/aliases/{}/delete"|format(alias.alias_id), "delete", "danger") %}
+  </div>
+</div>
 
-<h2>contacts</h2>
-<p class="muted">Reply to the reverse alias and the contact sees the alias as the sender.</p>
-<table>
-  <tr><th>contact</th><th>name</th><th>reverse alias</th><th>first seen</th></tr>
-  {% for contact in contacts %}
-  <tr>
-    <td><code>{{ contact.email }}</code></td>
-    <td>{{ contact.name }}</td>
-    <td><code>{{ contact.reverse_alias }}</code></td>
-    <td class="muted">{{ contact.created_at }}</td>
-  </tr>
-  {% endfor %}
-</table>
+<div class="stats">
+  {% call feedback::stat("forwarded", alias.forward_count) %}
+  {% call feedback::stat("replied", alias.reply_count) %}
+  {% call feedback::stat("blocked", alias.blocked_count) %}
+  {% call feedback::stat("contacts", contacts.len()) %}
+</div>
+
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">details</h2>
+  </div>
+  <div class="card">
+    <div class="card__body stack">
+      <p class="meta">
+        <span>forwards to <code class="mono">{{ alias.mailbox_email }}</code></span>
+        <span>created {{ alias.created_at }}</span>
+      </p>
+      {% if alias.note.is_empty() %}
+        <p class="muted">No note.</p>
+      {% else %}
+        <p>{{ alias.note }}</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">contacts</h2>
+    <p class="section__hint">Reply to the reverse alias and the contact sees the alias as the sender.</p>
+  </div>
+  <div class="card card--flush">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">contact</th>
+            <th scope="col">name</th>
+            <th scope="col">reverse alias</th>
+            <th scope="col">first seen</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for contact in contacts %}
+          <tr>
+            <td data-label="contact" class="mono">{{ contact.email }}</td>
+            <td data-label="name">{{ contact.name }}</td>
+            <td data-label="reverse alias">{% call copy::copy(contact.reverse_alias) %}</td>
+            <td data-label="first seen" class="table__muted">{{ contact.created_at }}</td>
+          </tr>
+          {% endfor %}
+          {% if contacts.is_empty() %}
+            {% call feedback::empty_row(4, "No contacts yet", "Anyone who mails this alias shows up here with their reverse alias.") %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
 {% endblock %}

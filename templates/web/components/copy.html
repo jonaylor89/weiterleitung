@@ -1,0 +1,16 @@
+{# An address plus a copy affordance. The button degrades to plain text if the
+   clipboard API is unavailable — the address itself stays selectable. #}
+
+{% macro copy(value) %}
+<span class="copy">
+  <code class="copy__value">{{ value }}</code>
+  <button class="copy__button" type="button" data-copy="{{ value }}" aria-label="Copy {{ value }}">copy</button>
+</span>
+{% endmacro %}
+
+{% macro copy_link(href, value) %}
+<span class="copy">
+  <a class="copy__value" href="{{ href }}">{{ value }}</a>
+  <button class="copy__button" type="button" data-copy="{{ value }}" aria-label="Copy {{ value }}">copy</button>
+</span>
+{% endmacro %}
