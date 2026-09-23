@@ -11,7 +11,7 @@ use weiterleitung::configuration::{
     DeliveryMode, DkimSettings, RelaySettings, Settings, get_configuration,
 };
 use weiterleitung::contact::find_contact_by_reverse_alias;
-use weiterleitung::delivery::{Relay, list_recent};
+use weiterleitung::delivery::{Relay, claim_due, list_recent, requeue_interrupted};
 use weiterleitung::domain::EmailAddress;
 use weiterleitung::mailbox::insert_mailbox;
 use weiterleitung::smtp::{AliasRouter, Envelope, MailHandler, RecipientDecision};
@@ -148,6 +148,38 @@ async fn the_relay_delivers_a_message_to_a_smarthost() {
 
     let received = sink.await.unwrap();
     assert!(received.iter().any(|line| line == "Subject: Hi"));
+}
+
+#[tokio::test]
+async fn messages_left_mid_delivery_by_a_crash_are_requeued() {
+    let app = spawn_app().await;
+    let mailbox = insert_mailbox(
+        &app.pool,
+        &EmailAddress::parse("me@personal.example").unwrap(),
+        true,
+    )
+    .await
+    .unwrap();
+    let alias_address = EmailAddress::parse("shop.1a2b@example.com").unwrap();
+    insert_alias(&app.pool, &alias_address, &mailbox.mailbox_id, None)
+        .await
+        .unwrap();
+    AliasRouter::new(app.pool.clone(), &app.settings)
+        .handle(Envelope {
+            mail_from: "support@shop.example".to_string(),
+            rcpt_to: vec![alias_address.to_string()],
+            data: b"From: support@shop.example\r\nSubject: Hi\r\n\r\nHello\r\n".to_vec(),
+        })
+        .await
+        .unwrap();
+
+    // The worker claims the message and then dies before reporting an outcome.
+    let claimed = claim_due(&app.pool, 10).await.unwrap();
+    assert_eq!(claimed.len(), 1);
+    assert!(claim_due(&app.pool, 10).await.unwrap().is_empty());
+
+    assert_eq!(requeue_interrupted(&app.pool).await.unwrap(), 1);
+    assert_eq!(claim_due(&app.pool, 10).await.unwrap().len(), 1);
 }
 
 #[tokio::test]
