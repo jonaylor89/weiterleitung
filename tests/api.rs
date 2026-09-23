@@ -5,10 +5,13 @@ use secrecy::Secret;
 use sqlx::SqlitePool;
 use std::sync::LazyLock;
 use tempfile::TempDir;
+use tokio::io::{AsyncBufReadExt, AsyncWriteExt};
 use weiterleitung::alias::{find_alias_by_address, insert_alias};
-use weiterleitung::configuration::{Settings, get_configuration};
+use weiterleitung::configuration::{
+    DeliveryMode, DkimSettings, RelaySettings, Settings, get_configuration,
+};
 use weiterleitung::contact::find_contact_by_reverse_alias;
-use weiterleitung::delivery::list_recent;
+use weiterleitung::delivery::{Relay, list_recent};
 use weiterleitung::domain::EmailAddress;
 use weiterleitung::mailbox::insert_mailbox;
 use weiterleitung::smtp::{AliasRouter, Envelope, MailHandler, RecipientDecision};
@@ -77,6 +80,74 @@ async fn spawn_app() -> TestApp {
         settings,
         _workspace: workspace,
     }
+}
+
+/// Guards against the process-wide rustls crypto provider being ambiguous,
+/// which makes the relay panic the moment it opens a connection.
+#[tokio::test]
+async fn the_relay_delivers_a_message_to_a_smarthost() {
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let relay_port = listener.local_addr().unwrap().port();
+    // The relay probes for STARTTLS first and reconnects in clear text when the
+    // peer does not offer it, so the sink has to survive more than one
+    // connection.
+    let sink = tokio::spawn(async move {
+        loop {
+            let (mut socket, _) = listener.accept().await.unwrap();
+            let (reader, mut writer) = socket.split();
+            let mut lines = tokio::io::BufReader::new(reader).lines();
+            let mut received = Vec::new();
+            let mut in_data = false;
+            writer.write_all(b"220 sink ESMTP\r\n").await.unwrap();
+            while let Ok(Some(line)) = lines.next_line().await {
+                if in_data {
+                    if line == "." {
+                        in_data = false;
+                        writer.write_all(b"250 2.0.0 Queued\r\n").await.unwrap();
+                    } else {
+                        received.push(line);
+                    }
+                    continue;
+                }
+                let response: &[u8] = match line.split_whitespace().next().unwrap_or_default() {
+                    "EHLO" | "HELO" => b"250 sink\r\n",
+                    "DATA" => {
+                        in_data = true;
+                        b"354 Go ahead\r\n"
+                    }
+                    "QUIT" => b"221 2.0.0 Bye\r\n",
+                    _ => b"250 2.1.0 Ok\r\n",
+                };
+                writer.write_all(response).await.unwrap();
+            }
+            if !received.is_empty() {
+                return received;
+            }
+        }
+    });
+
+    let mut settings = get_configuration().unwrap().delivery;
+    settings.mode = DeliveryMode::Relay;
+    settings.relay = Some(RelaySettings {
+        host: "127.0.0.1".to_string(),
+        port: relay_port,
+        username: None,
+        password: None,
+        implicit_tls: false,
+    });
+    let relay = Relay::build(&settings, &DkimSettings::default()).unwrap();
+
+    relay
+        .send(
+            "ct.abc@example.com",
+            "support@shop.example",
+            b"Subject: Hi\r\n\r\nHello\r\n",
+        )
+        .await
+        .expect("The message should have been handed to the smarthost");
+
+    let received = sink.await.unwrap();
+    assert!(received.iter().any(|line| line == "Subject: Hi"));
 }
 
 #[tokio::test]

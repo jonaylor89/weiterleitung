@@ -7,6 +7,7 @@ use mail_send::smtp::message::Message;
 use rustls_pki_types::PrivateKeyDer;
 use rustls_pki_types::pem::PemObject;
 use secrecy::ExposeSecret;
+use std::sync::Once;
 use std::time::Duration;
 
 use crate::configuration::{DeliveryMode, DeliverySettings, DkimSettings};
@@ -21,8 +22,19 @@ pub struct Relay {
     resolver: TokioAsyncResolver,
 }
 
+/// Several dependencies pull in rustls with different crypto backends, which
+/// leaves the process-wide provider ambiguous; TLS then panics on first use.
+fn install_crypto_provider() {
+    static INSTALLED: Once = Once::new();
+    INSTALLED.call_once(|| {
+        let _ = rustls::crypto::ring::default_provider().install_default();
+    });
+}
+
 impl Relay {
     pub fn build(settings: &DeliverySettings, dkim: &DkimSettings) -> Result<Self, anyhow::Error> {
+        install_crypto_provider();
+
         if settings.mode == DeliveryMode::Relay && settings.relay.is_none() {
             return Err(anyhow!(
                 "`delivery.mode` is `relay` but no `delivery.relay` block was configured"
