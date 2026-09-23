@@ -65,10 +65,15 @@ APP_ADMIN__PASSWORD=… APP_ALIASES__DOMAINS=alias.tld,alias2.tld cargo run
 ## Deploying
 
 1. Point an MX record for your alias domain at the host, and open port 25.
-2. Publish SPF, DKIM (`dkim.selector`) and DMARC records for the alias domain —
-   without them, forwarded mail lands in spam.
+2. Publish SPF, DKIM (`dkim.selector`), DMARC and reverse DNS — without them,
+   forwarded mail lands in spam.
 3. Run with `APP_ENVIRONMENT=production`, `APP_APPLICATION__HMAC_SECRET` and
    `APP_ADMIN__PASSWORD` set, and put the admin UI behind TLS.
+
+[`docs/production.md`](docs/production.md) has the full runbook — DNS records,
+DKIM key generation, a systemd unit, backups, and the known gaps (no inbound
+STARTTLS, no graceful shutdown, no spam filtering) worth knowing before you
+point real mail at it.
 
 ## Development
 
