@@ -38,8 +38,10 @@ cargo test
 cargo build --release
 ```
 
-Integration tests in `tests/api.rs` use a temporary SQLite database and spool
-per test; no external services are required.
+Integration tests live in `tests/api/` (module root `tests/api/main.rs`) and use
+a temporary SQLite database and spool per test. The delivery tests relay into a
+real Mailpit server, so `mailpit` must be on `PATH` (or `MAILPIT_BIN` set); see
+`docs/testing.md`.
 
 ## Database
 
