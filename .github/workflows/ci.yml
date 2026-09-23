@@ -60,7 +60,8 @@ jobs:
           tar -xzf mailpit.tar.gz mailpit
           sudo install -m 0755 mailpit /usr/local/bin/mailpit
           rm mailpit mailpit.tar.gz
-          mailpit version
+          # `mailpit version` alone exits 1 when its update check is rate limited.
+          mailpit version --no-release-check
       - run: cargo test
 
   sqlx:
