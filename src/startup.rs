@@ -14,8 +14,9 @@ use tower_sessions_sqlx_store::SqliteStore;
 use crate::authentication::{AuthenticatedUser, seed_admin_user};
 use crate::configuration::{AliasSettings, DatabaseSettings, Settings};
 use crate::routes::{
-    alias_detail, create_alias, create_mailbox, dashboard, delete_alias, delete_mailbox,
-    health_check, home, log_out, login, login_form, mailboxes, toggle_alias,
+    alias_detail, app_css, app_js, create_alias, create_mailbox, dashboard, delete_alias,
+    delete_mailbox, health_check, home, log_out, login, login_form, mailboxes, styleguide,
+    toggle_alias,
 };
 
 #[derive(Clone)]
@@ -98,6 +99,7 @@ fn build_router(
         .route("/aliases/{alias_id}/delete", post(delete_alias))
         .route("/mailboxes", get(mailboxes).post(create_mailbox))
         .route("/mailboxes/{mailbox_id}/delete", post(delete_mailbox))
+        .route("/styleguide", get(styleguide))
         .route("/logout", post(log_out))
         .route_layer(middleware::from_extractor::<AuthenticatedUser>());
 
@@ -105,6 +107,8 @@ fn build_router(
         .route("/", get(home))
         .route("/health_check", get(health_check))
         .route("/login", get(login_form).post(login))
+        .route("/static/app.css", get(app_css))
+        .route("/static/app.js", get(app_js))
         .nest("/admin", admin_routes)
         .layer(session_layer)
         .layer(TraceLayer::new_for_http())

@@ -16,7 +16,7 @@ use crate::session_state::TypedSession;
 use crate::startup::AppState;
 use crate::web_templates::{
     AliasTemplate, AliasView, ContactView, DashboardTemplate, MailboxView, MailboxesTemplate,
-    MessageView, render,
+    MessageView, StyleguideTemplate, render,
 };
 
 const RECENT_MESSAGE_LIMIT: i64 = 50;
@@ -293,6 +293,15 @@ pub async fn delete_mailbox(
     }
     session.flash_info("Mailbox deleted").await;
     Redirect::to("/admin/mailboxes").into_response()
+}
+
+/// Renders every component in the design system, for reviewing it in both
+/// colour schemes without touching real data.
+#[tracing::instrument(name = "Styleguide", skip(session))]
+pub async fn styleguide(session: TypedSession) -> Response {
+    render(StyleguideTemplate {
+        flash_messages: session.get_flash_messages().await,
+    })
 }
 
 #[tracing::instrument(name = "Log out", skip(session))]

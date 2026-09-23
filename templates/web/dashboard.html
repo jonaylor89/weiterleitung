@@ -1,66 +1,145 @@
 {% extends "web/_layout.html" %}
+{%- import "web/components/button.html" as button -%}
+{%- import "web/components/feedback.html" as feedback -%}
+{%- import "web/components/form.html" as form -%}
+{%- import "web/components/copy.html" as copy -%}
 
 {% block title %}aliases &middot; weiterleitung{% endblock %}
+{% block nav_aliases %}aria-current="page"{% endblock %}
 
 {% block content %}
-<h2>new alias</h2>
-<form action="/admin/aliases" method="post" class="row">
-  <input type="text" name="local_part" placeholder="local part (blank = random)" size="28" />
-  <span class="muted">@{{ default_domain }}</span>
-  <select name="mailbox_id">
-    {% for mailbox in mailboxes %}
-      <option value="{{ mailbox.mailbox_id }}">{{ mailbox.email }}</option>
-    {% endfor %}
-  </select>
-  <input type="text" name="note" placeholder="note" size="24" />
-  <button class="primary" type="submit">create</button>
-</form>
-{% if mailboxes.is_empty() %}
-  <p class="muted">Add a mailbox first — aliases need somewhere to forward to.</p>
-{% endif %}
+<div class="page__header">
+  <h1 class="page__title">aliases</h1>
+  <p class="page__subtitle">forwarding to your mailboxes on <code>{{ default_domain }}</code></p>
+</div>
 
-<h2>aliases</h2>
-<table>
-  <tr>
-    <th>alias</th><th>forwards to</th><th>note</th><th>fwd</th><th>reply</th><th>blocked</th><th>created</th><th></th>
-  </tr>
-  {% for alias in aliases %}
-  <tr>
-    <td>
-      <a href="/admin/aliases/{{ alias.alias_id }}"><code>{{ alias.address }}</code></a>
-      {% if !alias.enabled %}<span class="pill">disabled</span>{% endif %}
-    </td>
-    <td class="muted"><code>{{ alias.mailbox_email }}</code></td>
-    <td class="muted">{{ alias.note }}</td>
-    <td>{{ alias.forward_count }}</td>
-    <td>{{ alias.reply_count }}</td>
-    <td>{{ alias.blocked_count }}</td>
-    <td class="muted">{{ alias.created_at }}</td>
-    <td class="row">
-      <form class="inline" action="/admin/aliases/{{ alias.alias_id }}/toggle" method="post">
-        <button type="submit">{% if alias.enabled %}disable{% else %}enable{% endif %}</button>
-      </form>
-      <form class="inline" action="/admin/aliases/{{ alias.alias_id }}/delete" method="post">
-        <button type="submit">delete</button>
-      </form>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
+<div class="stats">
+  {% call feedback::stat("aliases", aliases.len()) %}
+  {% call feedback::stat("mailboxes", mailboxes.len()) %}
+  {% call feedback::stat("recent mail", messages.len()) %}
+</div>
 
-<h2>recent mail</h2>
-<table>
-  <tr><th>when</th><th>direction</th><th>from</th><th>to</th><th>subject</th><th>status</th><th>error</th></tr>
-  {% for message in messages %}
-  <tr>
-    <td class="muted">{{ message.created_at }}</td>
-    <td>{{ message.direction }}</td>
-    <td class="muted"><code>{{ message.envelope_from }}</code></td>
-    <td class="muted"><code>{{ message.envelope_to }}</code></td>
-    <td>{{ message.subject }}</td>
-    <td>{{ message.status }}{% if message.attempts > 0 %} <span class="muted">({{ message.attempts }})</span>{% endif %}</td>
-    <td class="muted">{{ message.last_error }}</td>
-  </tr>
-  {% endfor %}
-</table>
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">new alias</h2>
+    {% if mailboxes.is_empty() %}
+      <p class="section__hint">Add a mailbox first — aliases need somewhere to forward to.</p>
+    {% endif %}
+  </div>
+  <div class="card">
+    <form class="card__body form-row" action="/admin/aliases" method="post">
+      {% call form::field("local_part", "local part", "text", "blank = random", "") %}
+      <span class="form-row__suffix">@{{ default_domain }}</span>
+      {% call form::mailbox_select("mailbox_id", "forwards to", mailboxes) %}
+      {% call form::field("note", "note", "text", "what is it for?", "") %}
+      <div class="form-row__action">
+        {% call button::button("create", "primary", "submit") %}
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">all aliases</h2>
+  </div>
+  <div class="card card--flush">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">alias</th>
+            <th scope="col">forwards to</th>
+            <th scope="col">note</th>
+            <th scope="col" class="table__num">fwd</th>
+            <th scope="col" class="table__num">reply</th>
+            <th scope="col" class="table__num">blocked</th>
+            <th scope="col">created</th>
+            <th scope="col"><span class="visually-hidden">actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for alias in aliases %}
+          <tr>
+            <td data-label="alias">
+              <span class="row">
+                {% call copy::copy_link("/admin/aliases/{}"|format(alias.alias_id), alias.address) %}
+                {% if alias.enabled %}
+                  {% call feedback::badge("enabled", "success") %}
+                {% else %}
+                  {% call feedback::badge("disabled", "neutral") %}
+                {% endif %}
+              </span>
+            </td>
+            <td data-label="forwards to" class="table__muted mono">{{ alias.mailbox_email }}</td>
+            <td data-label="note" class="table__muted">{{ alias.note }}</td>
+            <td data-label="forwarded" class="table__num">{{ alias.forward_count }}</td>
+            <td data-label="replied" class="table__num">{{ alias.reply_count }}</td>
+            <td data-label="blocked" class="table__num">{{ alias.blocked_count }}</td>
+            <td data-label="created" class="table__muted">{{ alias.created_at }}</td>
+            <td>
+              <div class="table__actions">
+                {% if alias.enabled %}
+                  {% call button::post_button("/admin/aliases/{}/toggle"|format(alias.alias_id), "disable", "neutral") %}
+                {% else %}
+                  {% call button::post_button("/admin/aliases/{}/toggle"|format(alias.alias_id), "enable", "neutral") %}
+                {% endif %}
+                {% call button::post_button("/admin/aliases/{}/delete"|format(alias.alias_id), "delete", "danger") %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+          {% if aliases.is_empty() %}
+            {% call feedback::empty_row(8, "No aliases yet", "Create one above and hand it out instead of your real address.") %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__header">
+    <h2 class="section__title">recent mail</h2>
+    <p class="section__hint">the last {{ messages.len() }} messages through the queue</p>
+  </div>
+  <div class="card card--flush">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">when</th>
+            <th scope="col">direction</th>
+            <th scope="col">from</th>
+            <th scope="col">to</th>
+            <th scope="col">subject</th>
+            <th scope="col">status</th>
+            <th scope="col">error</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for message in messages %}
+          <tr>
+            <td data-label="when" class="table__muted">{{ message.created_at }}</td>
+            <td data-label="direction">{{ message.direction }}</td>
+            <td data-label="from" class="table__muted mono">{{ message.envelope_from }}</td>
+            <td data-label="to" class="table__muted mono">{{ message.envelope_to }}</td>
+            <td data-label="subject">{{ message.subject }}</td>
+            <td data-label="status">
+              <span class="row">
+                {% call feedback::status_badge(message.status) %}
+                {% if message.attempts > 0 %}<span class="muted">{{ message.attempts }}&times;</span>{% endif %}
+              </span>
+            </td>
+            <td data-label="error" class="table__muted">{{ message.last_error }}</td>
+          </tr>
+          {% endfor %}
+          {% if messages.is_empty() %}
+            {% call feedback::empty_row(7, "Nothing delivered yet", "Forwarded and replied mail shows up here as it moves through the queue.") %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
 {% endblock %}

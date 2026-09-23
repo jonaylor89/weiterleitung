@@ -1,0 +1,46 @@
+{# Form primitives: every input carries a real <label for>. Pass "" for the
+   optional arguments (placeholder, hint, error, autocomplete). #}
+
+{% macro field(name, label, kind, placeholder, hint) %}
+<div class="field">
+  <label class="field__label" for="f-{{ name }}">{{ label }}</label>
+  <input class="input" id="f-{{ name }}" name="{{ name }}" type="{{ kind }}"
+         {% if !placeholder.is_empty() %}placeholder="{{ placeholder }}"{% endif %} />
+  {% if !hint.is_empty() %}<p class="field__hint">{{ hint }}</p>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro auth_field(name, label, kind, autocomplete, autofocus) %}
+<div class="field">
+  <label class="field__label" for="f-{{ name }}">{{ label }}</label>
+  <input class="input" id="f-{{ name }}" name="{{ name }}" type="{{ kind }}"
+         autocomplete="{{ autocomplete }}"{% if autofocus %} autofocus{% endif %} />
+</div>
+{% endmacro %}
+
+{# An invalid field with its message, used by the styleguide. #}
+{% macro field_error(name, label, kind, error) %}
+<div class="field field--invalid">
+  <label class="field__label" for="f-{{ name }}">{{ label }}</label>
+  <input class="input" id="f-{{ name }}" name="{{ name }}" type="{{ kind }}" aria-describedby="e-{{ name }}" aria-invalid="true" />
+  <p class="field__error" id="e-{{ name }}">{{ error }}</p>
+</div>
+{% endmacro %}
+
+{% macro mailbox_select(name, label, mailboxes) %}
+<div class="field">
+  <label class="field__label" for="f-{{ name }}">{{ label }}</label>
+  <select class="select" id="f-{{ name }}" name="{{ name }}">
+    {% for mailbox in mailboxes %}
+      <option value="{{ mailbox.mailbox_id }}">{{ mailbox.email }}</option>
+    {% endfor %}
+  </select>
+</div>
+{% endmacro %}
+
+{% macro checkbox(name, label, value) %}
+<label class="checkbox" for="f-{{ name }}">
+  <input type="checkbox" id="f-{{ name }}" name="{{ name }}" value="{{ value }}" />
+  {{ label }}
+</label>
+{% endmacro %}

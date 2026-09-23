@@ -1,0 +1,47 @@
+{# Badges, alerts, stat tiles and empty states. `tone` is one of "neutral",
+   "success", "danger", "warning", "accent". #}
+
+{% macro badge(label, tone) %}
+<span class="badge{% if tone != "neutral" %} badge--{{ tone }}{% endif %}">{{ label }}</span>
+{% endmacro %}
+
+{# Maps a delivery status onto a tone so the table stays declarative. #}
+{% macro status_badge(status) %}
+{% if status == "sent" %}
+  {% call badge(status, "success") %}
+{% else if status == "failed" %}
+  {% call badge(status, "danger") %}
+{% else if status == "sending" %}
+  {% call badge(status, "warning") %}
+{% else %}
+  {% call badge(status, "neutral") %}
+{% endif %}
+{% endmacro %}
+
+{% macro alert(message, is_error) %}
+<p class="alert {% if is_error %}alert--error{% else %}alert--info{% endif %}"
+   role="{% if is_error %}alert{% else %}status{% endif %}">{{ message }}</p>
+{% endmacro %}
+
+{% macro stat(label, value) %}
+<div class="stat">
+  <span class="stat__label">{{ label }}</span>
+  <span class="stat__value">{{ value }}</span>
+</div>
+{% endmacro %}
+
+{% macro empty(title, hint) %}
+<div class="empty">
+  <p class="empty__title">{{ title }}</p>
+  <p>{{ hint }}</p>
+</div>
+{% endmacro %}
+
+{# The same empty state, spanning a table body. #}
+{% macro empty_row(colspan, title, hint) %}
+<tr>
+  <td colspan="{{ colspan }}">
+    {% call empty(title, hint) %}
+  </td>
+</tr>
+{% endmacro %}

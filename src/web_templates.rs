@@ -69,6 +69,12 @@ pub struct MailboxesTemplate {
 }
 
 #[derive(Template)]
+#[template(path = "web/styleguide.html")]
+pub struct StyleguideTemplate {
+    pub flash_messages: Vec<FlashMessage>,
+}
+
+#[derive(Template)]
 #[template(path = "web/alias.html")]
 pub struct AliasTemplate {
     pub flash_messages: Vec<FlashMessage>,
