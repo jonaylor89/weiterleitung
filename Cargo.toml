@@ -46,6 +46,7 @@ tracing-subscriber = { version = "0.3.22", features = ["registry", "env-filter"]
 unicode-segmentation = "1.12.0"
 uuid = { version = "1.19.0", features = ["v4", "serde"] }
 rustls-pki-types = { version = "1.15", features = ["std"] }
+rustls = { version = "0.23.45", default-features = false, features = ["ring", "logging", "std", "tls12"] }
 
 [dependencies.sqlx]
 default-features = false

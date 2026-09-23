@@ -17,6 +17,14 @@ pub async fn run_delivery_worker_until_stopped(
     let poll_interval = Duration::from_secs(configuration.delivery.poll_interval_secs);
     let max_attempts = configuration.delivery.max_attempts;
 
+    let requeued = queue::requeue_interrupted(&pool).await?;
+    if requeued > 0 {
+        tracing::warn!(
+            requeued,
+            "Requeued messages left mid-delivery by a previous run"
+        );
+    }
+
     tracing::info!("Delivery worker started");
     loop {
         match drain_queue(&pool, &relay, max_attempts).await {

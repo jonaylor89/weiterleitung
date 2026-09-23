@@ -3972,6 +3972,7 @@ dependencies = [
  "mail-send",
  "rand 0.8.8",
  "reqwest",
+ "rustls",
  "rustls-pki-types",
  "secrecy",
  "serde",

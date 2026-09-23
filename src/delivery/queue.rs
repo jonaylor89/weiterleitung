@@ -134,6 +134,28 @@ pub async fn claim_due(pool: &SqlitePool, limit: i64) -> Result<Vec<QueuedMessag
     Ok(messages)
 }
 
+/// Messages are marked `sending` while the worker holds them, so a crash or a
+/// restart mid-delivery would strand them there forever. Returning them to the
+/// queue on startup costs at most a duplicate send, which the retry logic can
+/// produce anyway.
+#[tracing::instrument(name = "Requeue interrupted messages", skip(pool))]
+pub async fn requeue_interrupted(pool: &SqlitePool) -> Result<u64, anyhow::Error> {
+    let now = Utc::now().to_rfc3339();
+    let requeued = sqlx::query!(
+        r#"
+        UPDATE outbox
+        SET status = 'pending', next_attempt_at = ?
+        WHERE status = 'sending'
+        "#,
+        now,
+    )
+    .execute(pool)
+    .await?
+    .rows_affected();
+
+    Ok(requeued)
+}
+
 #[tracing::instrument(name = "Mark message delivered", skip(pool))]
 pub async fn mark_delivered(pool: &SqlitePool, message_id: &str) -> Result<(), anyhow::Error> {
     let now = Utc::now().to_rfc3339();
